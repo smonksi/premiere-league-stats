@@ -19,6 +19,8 @@ def init():
 
 
     driver = webdriver.Chrome()
+    
+    driver.maximize_window()
 
     driver.get("https://www.premierleague.com/stats/top/players/appearances")  
 
@@ -45,7 +47,7 @@ def crap_cutter():
         advertClose.click()
         
 
-    time.sleep(1)
+    time.sleep(2)
 
 
 
