@@ -1,4 +1,5 @@
 import time
+import platform
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
@@ -20,7 +21,8 @@ def init():
 
     driver = webdriver.Chrome()
     
-    driver.maximize_window()
+    if platform.system() == 'Windows':
+        driver.maximize_window()
 
     driver.get("https://www.premierleague.com/stats/top/players/appearances")  
 
