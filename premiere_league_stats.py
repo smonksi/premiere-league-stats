@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 def init():
     global f, driver
 
-    filename = "Player appearances.csv"
+    filename = "Player by season 22-23.csv"
 
     f = open(filename, "w", encoding="utf-8")
 
@@ -32,7 +32,6 @@ def init():
 def crap_cutter():
 
     # find and click the Accept Cookies button
-
     cookies = driver.find_element(By.XPATH,"//button[contains(text(),'Accept All Cookies')]")
 
     if cookies.is_displayed():
@@ -41,7 +40,6 @@ def crap_cutter():
 
 
     # remove spurious ad that (was) appearing
-
     advertClose = driver.find_element(By.ID, "advertClose")
 
     if advertClose.is_displayed():
@@ -50,7 +48,6 @@ def crap_cutter():
         
 
     time.sleep(2)
-
 
 
 
@@ -70,14 +67,12 @@ def get_element_by_class(element, class_name = "playerCountry"):
 
 
 
-
 # Find the element (div) that opens the drop-down list when clicked
 def get_drop_list_button(text):
 
     button = driver.find_element(By.XPATH,".//div[text()='" + text + "']")
 
     return button
-
 
 
 
@@ -90,12 +85,10 @@ def show_drop_list(button):
 
 
 
-
 # Find the parent of the supplied element
 def get_parent_element(element):
 
     return element.find_element(By.XPATH,"..")
-
 
 
 
@@ -109,13 +102,10 @@ def get_drop_list_elements(text):
     return ul.find_elements(By.TAG_NAME,"li")
 
 
-
-
 # Get rows in a table
 def get_table_rows(table):
 
     return table.find_elements(By.TAG_NAME,"tr")
-
 
 
 # Print rows to console and/or file
@@ -124,6 +114,61 @@ def print_row(text):
     print(text)
 
     f.write(text +"\n")
+
+
+
+# Set the active season
+def set_active_season(first_item = "2023/24",target_season="2022/23"):
+
+    drop_down_button = get_drop_list_button(first_item)
+
+    show_drop_list(drop_down_button)
+
+    item_list = get_drop_list_elements(first_item)
+
+    for item in item_list:
+        
+       if item.text == target_season:
+            
+            item.click()
+
+            time.sleep(2)
+
+            break
+        
+
+# Get country
+def get_country(record):
+    return get_element_by_class(record, 'playerCountry').text
+
+
+# Get player
+def get_player(record):
+    playerCol =  get_element_by_class(record, 'playerName')
+
+    player = playerCol.text
+    href = "Player link not found"
+
+    if player != "'playerName' not found":
+            href = playerCol.get_attribute('href')
+    
+    return {"name":player,"link":href}
+
+
+# Get stat
+def get_stat(record):
+    return get_element_by_class(record, 'stats-table__main-stat').text
+
+
+# Get team
+def get_team(record):
+    team_badge = get_element_by_class(record, 'badge-image-container')
+
+    if team_badge.text:
+        return "No club found"
+
+    else:
+        return get_parent_element(team_badge).text
 
 
 
@@ -139,13 +184,13 @@ def extract_list(first_item = "All Clubs"):
 
     for item in item_list:
 
+        time.sleep(2)
+
         current_item = item.text
 
-        print(current_item)
-
-        time.sleep(2)
-        
         if current_item != first_item:
+
+            print(current_item)
 
             item.click()
         
@@ -170,38 +215,29 @@ def get_result_table_by_class(class_name = 'statsTableContainer'):
     for record in results:
         x = x + 1
 
-        country = get_element_by_class(record,'playerCountry').text
+        country = get_country(record)
+
+        player = get_player(record)
+
+        stat = get_stat(record)
+
+        team = get_team(record)
+
+        print_row(str(x) + ", " + player["name"] + ", " + country + ", " + stat + ", " + team +  ", " + player["link"])
 
 
-        playerCol = get_element_by_class(record, 'playerName')
-
-        player = playerCol.text
-        href = ""
-
-        if player != "'playerName' not found":
-            href = playerCol.get_attribute('href')
-
-
-        stat = get_element_by_class(record, 'mainStat').text
-
-        team = get_element_by_class(record, 'statNameSecondary').text
-
-        print_row(str(x) + ", " + player + ", " + country + ", " + stat + ", " + team +  ", " + href)
-
-
-
- 
 
 # Go
-
 
 init()
 
 crap_cutter()
 
-extract_list()
+set_active_season()
 
-# extract_list('All Nationalities')
+# extract_list()
+
+extract_list('All Nationalities')
 
 # extract_list('2022/23')
 
