@@ -15,3 +15,9 @@ Possible features: -
 -   ability to pagingate through results where number of players found exceeds page limit of 20;
 -   ability to define which fields should be returned from extracted data sets, with .csv file generated accordingly;
 -   ability to write to your own database!
+
+# refactoring 21 July 2023
+
+Refactored the code so that it can cater for:- 
+-   new layout of Premiere League website
+-   more consistency and efficiency
