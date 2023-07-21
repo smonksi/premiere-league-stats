@@ -1,6 +1,6 @@
 # premiere-league-stats
 
-Refactored the code so that it can cater for:- 
+Refactored the code so that it can cater for: - 
 -   any of the drop down lists
 -   extract results to a .csv file. 
  
@@ -16,10 +16,13 @@ Possible features: -
 -   ability to define which fields should be returned from extracted data sets, with .csv file generated accordingly;
 -   ability to write to your own database!
 
-# refactoring 21 July 2023
+# refactoring and new features 21 July 2023
 
-Refactored the code so that it can cater for:- 
+Refactored the code so that it can cater for: - 
 -   new layout of Premiere League website
 -   more consistency and efficiency
+
+Added new features or adjustments: -
 -   .csv filenames generated automatically based on selection
 -   print the current record set title to the .csv file (e.g. club name, position, nationality, season etc)
+-   adjusted delay in 'get_result_table_by_class' to allow for for each new recordset to be retrieved and displayed

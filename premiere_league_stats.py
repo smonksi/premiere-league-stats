@@ -12,16 +12,6 @@ from pathvalidate import sanitize_filename
 def init():
     global driver
 
-    # global f, driver
-
-    # filename = "Player by season 22-23.csv"
-
-    # f = open(filename, "w", encoding="utf-8")
-
-    # headers = "Rank, Player, Country, Appearances, Club, Profile, \n"
-
-    # f.write(headers)
-
     driver = webdriver.Chrome()
     
     if platform.system() == 'Windows':
@@ -222,7 +212,7 @@ def get_result_table_by_class(class_name = 'statsTableContainer'):
     
     table = driver.find_element(By.CLASS_NAME, class_name)
 
-    time.sleep(1)
+    time.sleep(2)
 
     results = get_table_rows(table)
 
@@ -253,8 +243,8 @@ set_active_season()
 
 # extract_list()
 
-# extract_list('All Nationalities')
+extract_list('All Nationalities')
 
 # extract_list('2022/23')
 
-extract_list('All Positions')
+# extract_list('All Positions')
