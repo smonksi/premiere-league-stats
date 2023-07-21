@@ -2,22 +2,25 @@ import time
 import platform
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from pathvalidate import sanitize_filename
+
 
  
 # -- Functions --
 
-# Carry out all set up requirements
+# Carry out set up requirements
 def init():
-    global f, driver
+    global driver
 
-    filename = "Player by season 22-23.csv"
+    # global f, driver
 
-    f = open(filename, "w", encoding="utf-8")
+    # filename = "Player by season 22-23.csv"
 
-    headers = "Rank, Player, Country, Appearances, Club, Profile, \n"
+    # f = open(filename, "w", encoding="utf-8")
 
-    f.write(headers)
+    # headers = "Rank, Player, Country, Appearances, Club, Profile, \n"
 
+    # f.write(headers)
 
     driver = webdriver.Chrome()
     
@@ -25,6 +28,22 @@ def init():
         driver.maximize_window()
 
     driver.get("https://www.premierleague.com/stats/top/players/appearances")  
+
+
+
+# Open file and name it based on current search
+def open_file(filename):
+    global f
+
+    filename = "Player by " + filename.lower() +".csv"
+
+    filename = sanitize_filename(filename,"-")
+
+    f = open(filename, "w", encoding="utf-8")
+
+    headers = "Rank, Player, Country, Appearances, Club, Profile, \n"
+
+    f.write(headers)
 
 
 
@@ -66,14 +85,12 @@ def get_element_by_class(element, class_name = "playerCountry"):
     return result
 
 
-
 # Find the element (div) that opens the drop-down list when clicked
 def get_drop_list_button(text):
 
     button = driver.find_element(By.XPATH,".//div[text()='" + text + "']")
 
     return button
-
 
 
 # Open the drop-down list
@@ -84,12 +101,10 @@ def show_drop_list(button):
         button.click()
 
 
-
 # Find the parent of the supplied element
 def get_parent_element(element):
 
     return element.find_element(By.XPATH,"..")
-
 
 
 # Find one element in a ul in order to find all its li elements
@@ -175,6 +190,8 @@ def get_team(record):
 # Iterate through a dropdown list...
 def extract_list(first_item = "All Clubs"):
 
+    open_file(first_item)
+
     drop_down_button = get_drop_list_button(first_item)
 
     show_drop_list(drop_down_button)
@@ -197,7 +214,6 @@ def extract_list(first_item = "All Clubs"):
             get_result_table_by_class()
 
             show_drop_list(drop_down_button)
-
 
 
 
@@ -237,8 +253,8 @@ set_active_season()
 
 # extract_list()
 
-extract_list('All Nationalities')
+# extract_list('All Nationalities')
 
-# extract_list('2022/23')
+extract_list('2022/23')
 
 # extract_list('All Positions')

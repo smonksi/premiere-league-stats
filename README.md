@@ -21,3 +21,4 @@ Possible features: -
 Refactored the code so that it can cater for:- 
 -   new layout of Premiere League website
 -   more consistency and efficiency
+-   .csv filenames generated automatically based on selection
