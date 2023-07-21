@@ -207,7 +207,7 @@ def extract_list(first_item = "All Clubs"):
 
         if current_item != first_item:
 
-            print(current_item)
+            print_row(current_item)
 
             item.click()
         
@@ -255,6 +255,6 @@ set_active_season()
 
 # extract_list('All Nationalities')
 
-extract_list('2022/23')
+# extract_list('2022/23')
 
-# extract_list('All Positions')
+extract_list('All Positions')
