@@ -10,7 +10,9 @@ from pathvalidate import sanitize_filename
 
 # Carry out set up requirements
 def init():
-    global driver
+    global driver, current_season
+
+    current_season = "2023/24"
 
     driver = webdriver.Chrome()
     
@@ -23,9 +25,9 @@ def init():
 
 # Open file and name it based on current search
 def open_file(filename):
-    global f
+    global f, active_season
 
-    filename = "Player by " + filename.lower() +".csv"
+    filename = "Player by " + filename.lower() + " " + active_season + ".csv"
 
     filename = sanitize_filename(filename,"-")
 
@@ -123,17 +125,21 @@ def print_row(text):
 
 
 # Set the active season
-def set_active_season(first_item = "2023/24",target_season="2022/23"):
+def set_active_season(target_season="2022/23"):
+    global current_season, active_season
 
-    drop_down_button = get_drop_list_button(first_item)
+    drop_down_button = get_drop_list_button(current_season)
 
     show_drop_list(drop_down_button)
 
-    item_list = get_drop_list_elements(first_item)
+    item_list = get_drop_list_elements(current_season)
 
     for item in item_list:
         
        if item.text == target_season:
+            
+            active_season = target_season
+            current_season = target_season
             
             item.click()
 
@@ -174,7 +180,34 @@ def get_team(record):
 
     else:
         return get_parent_element(team_badge).text
+    
 
+# Get results table
+def get_result_table_by_class(class_name = 'statsTableContainer'):
+    global record_index
+    
+    record_index = 0
+
+    table = get_element_by_class(driver, class_name)
+    return table
+
+# Check for pagination button..
+def has_pagination_next_button():
+    paginationNextButton = get_element_by_class(driver, 'paginationNextContainer')
+    if paginationNextButton != "'paginationNextContainer' not found":
+        return True
+    else:
+        return False
+    
+# Check if more records exist...
+def show_more_results():
+    paginationNextButton = get_element_by_class(driver, 'paginationNextContainer')
+    classes = paginationNextButton.get_attribute("class")
+    if classes.find("inactive") == -1:
+        paginationNextButton.click()
+        return True
+    else:
+        return False
 
 
 # Iterate through a dropdown list...
@@ -201,25 +234,25 @@ def extract_list(first_item = "All Clubs"):
 
             item.click()
         
-            get_result_table_by_class()
+            # Check for pagination
+            table = get_result_table_by_class()
+
+            while print_result_page(table):
+                print("More records found...")
 
             show_drop_list(drop_down_button)
 
 
-
-# Get player stats from table
-def get_result_table_by_class(class_name = 'statsTableContainer'):
-    
-    table = driver.find_element(By.CLASS_NAME, class_name)
+# Print a page of results
+def print_result_page(table): 
+    global record_index
 
     time.sleep(2)
 
     results = get_table_rows(table)
 
-    x = 0
-
     for record in results:
-        x = x + 1
+        record_index = record_index + 1
 
         country = get_country(record)
 
@@ -229,8 +262,10 @@ def get_result_table_by_class(class_name = 'statsTableContainer'):
 
         team = get_team(record)
 
-        print_row(str(x) + ", " + player["name"] + ", " + country + ", " + stat + ", " + team +  ", " + player["link"])
-
+        print_row(str(record_index) + ", " + player["name"] + ", " + country + ", " + stat + ", " + team +  ", " + player["link"])
+    
+    if has_pagination_next_button():
+        return show_more_results()
 
 
 # Go
@@ -239,12 +274,8 @@ init()
 
 crap_cutter()
 
-set_active_season()
-
 # extract_list()
 
-extract_list('All Nationalities')
-
-# extract_list('2022/23')
+# extract_list('All Nationalities')
 
 # extract_list('All Positions')

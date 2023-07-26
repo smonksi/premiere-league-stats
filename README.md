@@ -26,3 +26,19 @@ Added new features or adjustments: -
 -   .csv filenames generated automatically based on selection
 -   print the current record set title to the .csv file (e.g. club name, position, nationality, season etc)
 -   adjusted delay in 'get_result_table_by_class' to allow for for each new recordset to be retrieved and displayed
+
+# New features 26 July 2023
+
+Added new features or adjustments: -
+-   pagination enabled, if more results pages are available: -
+        - the pagination next button is clicked
+        - the results page is saved
+        - until the pages run out and the pagination button is disabled
+-   refactored set_active_season: - 
+        - current_season global 
+        - active_season global 
+        - add active_season to end of filename
+        - directly set target season for search
+# TODOs
+-   cater for multiple season passes on same query type (e.g 'All CLubs' or 'All Positions' )
+-   all code now requires refactoring!
