@@ -33,9 +33,16 @@ def open_file(filename):
 
     f = open(filename, "w", encoding="utf-8")
 
-    headers = "Rank, Player, Country, Appearances, Club, Profile, \n"
+    headers = "Number, Player, Country, Rank, Appearances, Club, Profile, \n"
 
     f.write(headers)
+
+
+# Close the current file
+def close_file():
+    global f
+
+    f.close
 
 
 
@@ -112,7 +119,17 @@ def get_drop_list_elements(text):
 # Get rows in a table
 def get_table_rows(table):
 
+    if no_content(table):
+        return []
+
     return table.find_elements(By.TAG_NAME,"tr")
+
+
+def no_content(table):
+    if get_element_by_class(table,"noContentContainer").text == "'noContentContainer' not found":
+        return False
+    
+    return True
 
 
 # Print rows to console and/or file
@@ -148,6 +165,7 @@ def set_active_season(target_season="2022/23"):
             break
         
 
+
 # Get country
 def get_country(record):
     return get_element_by_class(record, 'playerCountry').text
@@ -166,9 +184,11 @@ def get_player(record):
     return {"name":player,"link":href}
 
 
+
 # Get stat
 def get_stat(record):
     return get_element_by_class(record, 'stats-table__main-stat').text
+
 
 
 # Get team
@@ -180,7 +200,8 @@ def get_team(record):
 
     else:
         return get_parent_element(team_badge).text
-    
+
+
 
 # Get results table
 def get_result_table_by_class(class_name = 'statsTableContainer'):
@@ -191,6 +212,8 @@ def get_result_table_by_class(class_name = 'statsTableContainer'):
     table = get_element_by_class(driver, class_name)
     return table
 
+
+
 # Check for pagination button..
 def has_pagination_next_button():
     paginationNextButton = get_element_by_class(driver, 'paginationNextContainer')
@@ -199,6 +222,8 @@ def has_pagination_next_button():
     else:
         return False
     
+
+
 # Check if more records exist...
 def show_more_results():
     paginationNextButton = get_element_by_class(driver, 'paginationNextContainer')
@@ -210,25 +235,37 @@ def show_more_results():
         return False
 
 
+
+# Find the required drop-down list...
+def set_search_list(find_list = "All Clubs"):
+    global first_list_item, drop_down_button
+
+    first_list_item = find_list
+
+    # open_file(find_list)
+
+    drop_down_button = get_drop_list_button(find_list)
+
+
+
 # Iterate through a dropdown list...
-def extract_list(first_item = "All Clubs"):
-
-    open_file(first_item)
-
-    drop_down_button = get_drop_list_button(first_item)
+def extract_list():
+    global first_list_item, drop_down_button
+   
+    open_file(first_list_item)
 
     show_drop_list(drop_down_button)
 
-    item_list = get_drop_list_elements(first_item)
+    item_list = get_drop_list_elements(first_list_item)
         
 
     for item in item_list:
 
-        time.sleep(2)
+        time.sleep(0.5)
 
         current_item = item.text
 
-        if current_item != first_item:
+        if current_item != first_list_item:
 
             print_row(current_item)
 
@@ -243,11 +280,15 @@ def extract_list(first_item = "All Clubs"):
             show_drop_list(drop_down_button)
 
 
+    close_file()
+
+
+
 # Print a page of results
 def print_result_page(table): 
     global record_index
 
-    time.sleep(2)
+    time.sleep(1.5)
 
     results = get_table_rows(table)
 
@@ -274,7 +315,36 @@ init()
 
 crap_cutter()
 
+
+# set_active_season("1995/96")
+
+set_search_list('All Nationalities')
+
+extract_list()
+
+# set_active_season("1993/94")
+
 # extract_list()
+
+# set_active_season("1994/95")
+
+# extract_list()
+
+# set_active_season("1999/00")
+
+# extract_list()
+
+# set_active_season("2000/01")
+
+# extract_list()
+
+set_active_season("2001/02")
+
+extract_list()
+
+set_active_season("2002/03")
+
+extract_list()
 
 # extract_list('All Nationalities')
 

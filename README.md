@@ -42,3 +42,8 @@ Added new features or adjustments: -
 # TODOs
 -   cater for multiple season passes on same query type (e.g 'All CLubs' or 'All Positions' )
 -   all code now requires refactoring!
+
+# New features 26 July 2023
+
+Added new features or adjustments: -
+-   basic refactoring in readiness for multiple season looping
