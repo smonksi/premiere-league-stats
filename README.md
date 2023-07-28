@@ -43,7 +43,15 @@ Added new features or adjustments: -
 -   cater for multiple season passes on same query type (e.g 'All CLubs' or 'All Positions' )
 -   all code now requires refactoring!
 
-# New features 26 July 2023
+# New features 27 July 2023
 
 Added new features or adjustments: -
 -   basic refactoring in readiness for multiple season looping
+
+# New features 28 July 2023
+
+Added new features or adjustments: -
+-   refactored code, mainly to organise functions in logical groups
+-   added stat type capability (e.g. Appearances, Goals, Assists etc)
+        - new function, set_active_stat
+        - changes filename to "Player [stat type] all [search type] [season].csv"

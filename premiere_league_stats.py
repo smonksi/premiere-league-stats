@@ -5,14 +5,16 @@ from selenium.webdriver.common.by import By
 from pathvalidate import sanitize_filename
 
 
+
  
-# -- Functions --
+# ------------ Init ------------
 
 # Carry out set up requirements
 def init():
-    global driver, current_season
+    global driver, current_season, default_stat
 
     current_season = "2023/24"
+    default_stat = "Appearances"
 
     driver = webdriver.Chrome()
     
@@ -21,29 +23,12 @@ def init():
 
     driver.get("https://www.premierleague.com/stats/top/players/appearances")  
 
+    crap_cutter()
 
 
-# Open file and name it based on current search
-def open_file(filename):
-    global f, active_season
-
-    filename = "Player by " + filename.lower() + " " + active_season + ".csv"
-
-    filename = sanitize_filename(filename,"-")
-
-    f = open(filename, "w", encoding="utf-8")
-
-    headers = "Number, Player, Country, Rank, Appearances, Club, Profile, \n"
-
-    f.write(headers)
-
-
-# Close the current file
-def close_file():
-    global f
-
-    f.close
-
+# Shut down the web browser etc
+def shut_down():
+    driver.close
 
 
 # This is where we put any code that clears the decks before we interact with the page
@@ -56,18 +41,55 @@ def crap_cutter():
 
         cookies.click()
 
+    advertClose()
 
-    # remove spurious ad that (was) appearing
+    time.sleep(2)
+    
+
+# remove spurious ad that (was) appearing
+def advertClose():   
     advertClose = driver.find_element(By.ID, "advertClose")
 
     if advertClose.is_displayed():
 
         advertClose.click()
-        
-
-    time.sleep(2)
 
 
+
+# ------------ File Handling ------------
+
+# Open file and name it based on current search
+def open_file(filename):
+    global f, active_season, active_stat
+
+    filename = "Player " + active_stat.lower() + " " + filename.lower() + " " + active_season + ".csv"
+
+    filename = sanitize_filename(filename,"-")
+
+    f = open(filename, "w", encoding="utf-8")
+
+    headers = "Number, Player, Country, " + active_stat + ", Appearances, Club, Profile, \n"
+
+    f.write(headers)
+
+
+# Print rows to console and/or file
+def print_row(text):
+
+    print(text)
+
+    f.write(text +"\n")
+
+
+# Close the current file
+def close_file():
+    global f
+
+    f.close
+
+
+
+# ------------ DOM Utilities ------------
 
 # Find an element by a class name
 def get_element_by_class(element, class_name = "playerCountry"):
@@ -92,14 +114,6 @@ def get_drop_list_button(text):
     return button
 
 
-# Open the drop-down list
-def show_drop_list(button):
-
-    if button.is_displayed():
-
-        button.click()
-
-
 # Find the parent of the supplied element
 def get_parent_element(element):
 
@@ -107,9 +121,9 @@ def get_parent_element(element):
 
 
 # Find one element in a ul in order to find all its li elements
-def get_drop_list_elements(text):
+def get_drop_list_elements(text, element='li'):
 
-    li = driver.find_element(By.XPATH,".//li[text()='" + text + "']")
+    li = driver.find_element(By.XPATH,".//" + element + "[text()='" + text + "']")
 
     ul = get_parent_element(li)
 
@@ -132,14 +146,111 @@ def no_content(table):
     return True
 
 
-# Print rows to console and/or file
-def print_row(text):
+# Open drop-down list
+def show_drop_list(button):
 
-    print(text)
+    if button.is_displayed():
 
-    f.write(text +"\n")
+        button.click()
 
 
+
+# ------------ Record Fields ------------
+
+# Get player
+def get_player(record):
+    playerCol =  get_element_by_class(record, 'playerName')
+
+    player = playerCol.text
+    href = "Player link not found"
+
+    if player != "'playerName' not found":
+            href = playerCol.get_attribute('href')
+    
+    return {"name":player,"link":href}
+
+
+# Get stat
+def get_stat(record):
+    return get_element_by_class(record, 'stats-table__main-stat').text
+
+
+# Get team
+def get_team(record):
+    team_badge = get_element_by_class(record, 'badge-image-container')
+
+    if team_badge.text:
+        return "No club found"
+
+    else:
+        return get_parent_element(team_badge).text
+
+
+# Get country
+def get_country(record):
+    return get_element_by_class(record, 'playerCountry').text
+
+
+
+# ------------ Results ------------
+
+# Get results table
+def get_result_table_by_class(class_name = 'statsTableContainer'):
+    global record_index
+    
+    record_index = 0
+
+    table = get_element_by_class(driver, class_name)
+    return table
+
+
+# Check for pagination button..
+def has_pagination_next_button():
+    paginationNextButton = get_element_by_class(driver, 'paginationNextContainer')
+    if paginationNextButton != "'paginationNextContainer' not found":
+        return True
+    else:
+        return False
+    
+
+# Check if more records exist...
+def show_more_results():
+    paginationNextButton = get_element_by_class(driver, 'paginationNextContainer')
+    classes = paginationNextButton.get_attribute("class")
+    if classes.find("inactive") == -1:
+        paginationNextButton.click()
+        return True
+    else:
+        return False
+
+
+# ------------ MAIN Loop ------------
+
+# Set the active stat
+def set_active_stat(target_stat="Appearances"):
+    global default_stat, active_stat
+
+    drop_down_button = get_drop_list_button(default_stat)
+
+    show_drop_list(drop_down_button)
+
+    # item = driver.find_element(By.LINK_TEXT,default_stat)
+
+    # item.click()
+
+    # advertClose()
+
+    item = driver.find_element(By.LINK_TEXT,target_stat)
+
+    item.click()
+
+    advertClose()
+
+    active_stat = target_stat
+
+    time.sleep(2)
+
+       
 
 # Set the active season
 def set_active_season(target_season="2022/23"):
@@ -165,77 +276,6 @@ def set_active_season(target_season="2022/23"):
             break
         
 
-
-# Get country
-def get_country(record):
-    return get_element_by_class(record, 'playerCountry').text
-
-
-# Get player
-def get_player(record):
-    playerCol =  get_element_by_class(record, 'playerName')
-
-    player = playerCol.text
-    href = "Player link not found"
-
-    if player != "'playerName' not found":
-            href = playerCol.get_attribute('href')
-    
-    return {"name":player,"link":href}
-
-
-
-# Get stat
-def get_stat(record):
-    return get_element_by_class(record, 'stats-table__main-stat').text
-
-
-
-# Get team
-def get_team(record):
-    team_badge = get_element_by_class(record, 'badge-image-container')
-
-    if team_badge.text:
-        return "No club found"
-
-    else:
-        return get_parent_element(team_badge).text
-
-
-
-# Get results table
-def get_result_table_by_class(class_name = 'statsTableContainer'):
-    global record_index
-    
-    record_index = 0
-
-    table = get_element_by_class(driver, class_name)
-    return table
-
-
-
-# Check for pagination button..
-def has_pagination_next_button():
-    paginationNextButton = get_element_by_class(driver, 'paginationNextContainer')
-    if paginationNextButton != "'paginationNextContainer' not found":
-        return True
-    else:
-        return False
-    
-
-
-# Check if more records exist...
-def show_more_results():
-    paginationNextButton = get_element_by_class(driver, 'paginationNextContainer')
-    classes = paginationNextButton.get_attribute("class")
-    if classes.find("inactive") == -1:
-        paginationNextButton.click()
-        return True
-    else:
-        return False
-
-
-
 # Find the required drop-down list...
 def set_search_list(find_list = "All Clubs"):
     global first_list_item, drop_down_button
@@ -245,7 +285,6 @@ def set_search_list(find_list = "All Clubs"):
     # open_file(find_list)
 
     drop_down_button = get_drop_list_button(find_list)
-
 
 
 # Iterate through a dropdown list...
@@ -271,7 +310,6 @@ def extract_list():
 
             item.click()
         
-            # Check for pagination
             table = get_result_table_by_class()
 
             while print_result_page(table):
@@ -281,7 +319,6 @@ def extract_list():
 
 
     close_file()
-
 
 
 # Print a page of results
@@ -305,6 +342,7 @@ def print_result_page(table):
 
         print_row(str(record_index) + ", " + player["name"] + ", " + country + ", " + stat + ", " + team +  ", " + player["link"])
     
+    # Check for pagination
     if has_pagination_next_button():
         return show_more_results()
 
@@ -313,39 +351,13 @@ def print_result_page(table):
 
 init()
 
-crap_cutter()
-
-
-# set_active_season("1995/96")
-
-set_search_list('All Nationalities')
-
-extract_list()
-
-# set_active_season("1993/94")
-
-# extract_list()
-
-# set_active_season("1994/95")
-
-# extract_list()
-
-# set_active_season("1999/00")
-
-# extract_list()
-
-# set_active_season("2000/01")
-
-# extract_list()
-
-set_active_season("2001/02")
-
-extract_list()
-
-set_active_season("2002/03")
+set_active_stat("Goals")
+set_active_season("2022/23")
+set_search_list()
 
 extract_list()
 
 # extract_list('All Nationalities')
-
 # extract_list('All Positions')
+
+shut_down()
