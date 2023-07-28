@@ -16,7 +16,7 @@ Possible features: -
 -   ability to define which fields should be returned from extracted data sets, with .csv file generated accordingly;
 -   ability to write to your own database!
 
-# refactoring and new features 21 July 2023
+# New features 21 July 2023
 
 Refactored the code so that it can cater for: - 
 -   new layout of Premiere League website
@@ -53,5 +53,7 @@ Added new features or adjustments: -
 Added new features or adjustments: -
 -   refactored code, mainly to organise functions in logical groups
 -   added stat type capability (e.g. Appearances, Goals, Assists etc)
-        - new function, set_active_stat
+        - new function, set_active_stat()
         - changes filename to "Player [stat type] all [search type] [season].csv"
+        - further refactoring incluing refined set_active_stat()
+-   added get_next_element() to find the following sibling by tag

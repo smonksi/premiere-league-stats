@@ -68,7 +68,7 @@ def open_file(filename):
 
     f = open(filename, "w", encoding="utf-8")
 
-    headers = "Number, Player, Country, " + active_stat + ", Appearances, Club, Profile, \n"
+    headers = "Rank, Player, Country, " + active_stat + ", Club, Profile, \n"
 
     f.write(headers)
 
@@ -119,6 +119,11 @@ def get_parent_element(element):
 
     return element.find_element(By.XPATH,"..")
 
+# Find the next sibling of the supplied element
+def get_next_element(element, tag="div"):
+
+    return element.find_element(By.XPATH,"following-sibling::" + tag)
+
 
 # Find one element in a ul in order to find all its li elements
 def get_drop_list_elements(text, element='li'):
@@ -139,6 +144,7 @@ def get_table_rows(table):
     return table.find_elements(By.TAG_NAME,"tr")
 
 
+# Find out if we have more rows in this record set
 def no_content(table):
     if get_element_by_class(table,"noContentContainer").text == "'noContentContainer' not found":
         return False
@@ -234,13 +240,9 @@ def set_active_stat(target_stat="Appearances"):
 
     show_drop_list(drop_down_button)
 
-    # item = driver.find_element(By.LINK_TEXT,default_stat)
+    drop_list_div = get_next_element(drop_down_button)
 
-    # item.click()
-
-    # advertClose()
-
-    item = driver.find_element(By.LINK_TEXT,target_stat)
+    item = drop_list_div.find_element(By.LINK_TEXT,target_stat)
 
     item.click()
 
@@ -250,7 +252,6 @@ def set_active_stat(target_stat="Appearances"):
 
     time.sleep(2)
 
-       
 
 # Set the active season
 def set_active_season(target_season="2022/23"):
@@ -288,7 +289,7 @@ def set_search_list(find_list = "All Clubs"):
 
 
 # Iterate through a dropdown list...
-def extract_list():
+def extract_list(save = True):
     global first_list_item, drop_down_button
    
     open_file(first_list_item)
@@ -312,11 +313,11 @@ def extract_list():
         
             table = get_result_table_by_class()
 
-            while print_result_page(table):
-                print("More records found...")
+            if save:
+                while print_result_page(table):
+                    print("More records found...")
 
             show_drop_list(drop_down_button)
-
 
     close_file()
 
@@ -351,11 +352,11 @@ def print_result_page(table):
 
 init()
 
-set_active_stat("Goals")
+set_active_stat("Assists")
 set_active_season("2022/23")
 set_search_list()
 
-extract_list()
+extract_list(False)
 
 # extract_list('All Nationalities')
 # extract_list('All Positions')
