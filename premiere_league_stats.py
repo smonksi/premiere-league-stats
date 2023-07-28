@@ -3,15 +3,23 @@ import platform
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pathvalidate import sanitize_filename
+import argparse
 
 
 
  
-# ------------ Init ------------
+# ------------ Init & Shutdown ------------
 
 # Carry out set up requirements
 def init():
     global driver, current_season, default_stat
+
+    define_arguments()
+    if has_arguments():
+        show_arguments()
+        print(get_argument())
+    
+    # exit()
 
     current_season = "2023/24"
     default_stat = "Appearances"
@@ -53,6 +61,72 @@ def advertClose():
     if advertClose.is_displayed():
 
         advertClose.click()
+
+
+# ------------ Command Line Arguments ------------
+
+# Define command line arguments
+def define_arguments():
+    global parser
+    parser = argparse.ArgumentParser(description='Please enter stat type --stat -s e.g. Appearances, Goals, Assists etc...')
+    parser.add_argument('-s', '--statistic', type=str) #, default="Appearances")
+    parser.add_argument('-y','--season', type=str)
+    parser.add_argument('-c','--club', action='store_true')
+    parser.add_argument('-n','--nationality', action='store_true')
+    parser.add_argument('-p','--position', action='store_true')
+
+
+# Show all command line arguments
+def has_arguments():
+
+    return get_argument("statistic") != None
+
+    # global parser
+
+    # args = parser.parse_args()
+
+    # for arg, value in vars(args).items():
+    #     if  value != None:
+    #         return True
+        
+    # return False
+
+
+# Show all command line arguments
+def show_arguments():
+    global parser
+
+    args = parser.parse_args()
+
+    for arg, value in vars(args).items():
+        print(arg.capitalize(), '=', value)
+
+
+# Retrieve a command line argument
+def get_argument(arg="statistic"):
+    global parser
+
+    args = parser.parse_args()
+
+    return getattr(args,arg)
+
+
+# Get search filter
+def get_search_filter():
+    global parser
+
+    args = parser.parse_args()
+
+    # if getattr(args,'club'):
+    #     return "All Clubs"
+    
+    if getattr(args,'nationality'):
+        return "All Nationalities"
+    
+    if getattr(args,'position'):
+        return "All Positions"
+    
+    return "All Clubs"
 
 
 
@@ -352,11 +426,16 @@ def print_result_page(table):
 
 init()
 
-set_active_stat("Assists")
-set_active_season("2022/23")
-set_search_list()
+if has_arguments():
+    set_active_stat(get_argument("statistic"))
+    set_active_season(get_argument("season"))
+    set_search_list(get_search_filter())
+else:
+    set_active_stat("Assists")
+    set_active_season("2022/23")
+    set_search_list()
 
-extract_list(False)
+extract_list()
 
 # extract_list('All Nationalities')
 # extract_list('All Positions')
