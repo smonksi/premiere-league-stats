@@ -26,8 +26,8 @@ def init():
 
     driver = webdriver.Chrome()
     
-    if platform.system() == 'Windows':
-        driver.maximize_window()
+    # if platform.system() == 'Windows':
+    #     driver.maximize_window()
 
     driver.get("https://www.premierleague.com/stats/top/players/appearances")  
 
@@ -36,6 +36,7 @@ def init():
 
 # Shut down the web browser etc
 def shut_down():
+    global driver
     driver.close
 
 
@@ -80,16 +81,6 @@ def define_arguments():
 def has_arguments():
 
     return get_argument("statistic") != None
-
-    # global parser
-
-    # args = parser.parse_args()
-
-    # for arg, value in vars(args).items():
-    #     if  value != None:
-    #         return True
-        
-    # return False
 
 
 # Show all command line arguments
@@ -435,7 +426,7 @@ else:
     set_active_season("2022/23")
     set_search_list()
 
-extract_list()
+extract_list(False)
 
 # extract_list('All Nationalities')
 # extract_list('All Positions')
