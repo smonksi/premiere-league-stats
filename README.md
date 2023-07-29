@@ -30,19 +30,19 @@ Added new features or adjustments: -
 # New features 26 July 2023
 
 Added new features or adjustments: -
--   pagination enabled, if more results pages are available: -
-        - the pagination next button is clicked
-        - the results page is saved
-        - until the pages run out and the pagination button is disabled
--   refactored set_active_season: - 
-        - current_season global 
-        - active_season global 
-        - add active_season to end of filename
-        - directly set target season for search
+- pagination enabled, if more results pages are available: -
+  - the pagination next button is clicked
+  - the results page is saved
+  - until the pages run out and the pagination button is disabled
+- refactored set_active_season: - 
+  - current_season global 
+  - active_season global 
+  - add active_season to end of filename
+  - directly set target season for search
 # TODOs
--   cater for multiple season passes on same query type (e.g 'All CLubs' or 'All Positions' ) - [ ]
--   all code now requires refactoring!                                                        - [ ]
--   improve error handling and validtation, especially for user inputs on command line        - [ ]
+- [ ]  cater for multiple season passes on same query type (e.g 'All CLubs' or 'All Positions' ) 
+- [ ]  all code now requires refactoring!
+- [ ]  improve error handling and validtation, especially for user inputs on command line
 
 # New features 27 July 2023
 
