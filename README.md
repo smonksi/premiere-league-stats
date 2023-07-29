@@ -54,11 +54,11 @@ Added new features or adjustments: -
 Added new features or adjustments: -
 - refactored code, mainly to organise functions in logical groups
 - added stat type capability (e.g. Appearances, Goals, Assists etc)
-        - new function, set_active_stat()
-        - changes filename to "Player [stat type] all [search type] [season].csv"
-        - further refactoring incluing refined set_active_stat()
+  - new function, set_active_stat()
+  - changes filename to "Player [stat type] all [search type] [season].csv"
+  - further refactoring incluing refined set_active_stat()
 - added get_next_element() to find the following sibling by tag
 - added new command line argument feature e.g.
-        - python3 premiere_league_stats.py -s Appearances -y 2022/23 -p
-        - python3 premiere_league_stats.py -s Assists -y 2003/04 -n
-        - python3 premiere_league_stats.py -s Goals -y 2001/02 -p
+  - python3 premiere_league_stats.py -s Appearances -y 2022/23 -p
+  - python3 premiere_league_stats.py -s Assists -y 2003/04 -n
+  - python3 premiere_league_stats.py -s Goals -y 2001/02 -p
