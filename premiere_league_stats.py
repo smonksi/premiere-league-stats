@@ -428,7 +428,4 @@ else:
 
 extract_list(False)
 
-# extract_list('All Nationalities')
-# extract_list('All Positions')
-
 shut_down()
