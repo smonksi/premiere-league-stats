@@ -21,7 +21,7 @@ def init():
     
     # exit()
 
-    current_season = "2023/24"
+    current_season = "2022/23"
     default_stat = "Appearances"
 
     driver = webdriver.Chrome()
@@ -157,6 +157,21 @@ def close_file():
 # ------------ DOM Utilities ------------
 
 # Find an element by a class name
+def get_element_by_text(element, text):
+
+    class result:
+        text = ''
+
+    try:
+        result = element.find_element(By.XPATH,".//div[text()='" + text + "']")
+    
+    except:
+        result.text = "'" + text + "' not found"
+
+    return result
+
+
+# Find an element by a class name
 def get_element_by_class(element, class_name = "playerCountry"):
 
     class result:
@@ -177,6 +192,15 @@ def get_drop_list_button(text):
     button = driver.find_element(By.XPATH,".//div[text()='" + text + "']")
 
     return button
+
+
+# Find the element (div) that opens the drop-down list when clicked
+def get_filter_button(text = "   Filter by Season  "):
+    global driver
+
+    filter_name_div = get_element_by_text(driver, text)
+
+    return get_next_element(filter_name_div)
 
 
 # Find the parent of the supplied element
@@ -322,7 +346,11 @@ def set_active_stat(target_stat="Appearances"):
 def set_active_season(target_season="2022/23"):
     global current_season, active_season
 
-    drop_down_button = get_drop_list_button(current_season)
+    # drop_down_button = get_drop_list_button(current_season)
+
+    # This method, get_filter_button, should always work regardless 
+    # of the current season and as long as the filter name remains the same...
+    drop_down_button = get_filter_button()
 
     show_drop_list(drop_down_button)
 
@@ -339,16 +367,20 @@ def set_active_season(target_season="2022/23"):
 
             time.sleep(2)
 
-            break
-        
+            return True
+
+    # If the target season is not found, default to current_season
+    print("ERROR: The target season (" + target_season + ") was not found, defaulting to season: " + current_season )
+    show_drop_list(drop_down_button) # this closes the button...
+    set_active_season(current_season)
+    return False
+
 
 # Find the required drop-down list...
 def set_search_list(find_list = "All Clubs"):
     global first_list_item, drop_down_button
 
     first_list_item = find_list
-
-    # open_file(find_list)
 
     drop_down_button = get_drop_list_button(find_list)
 
@@ -423,9 +455,9 @@ if has_arguments():
     set_search_list(get_search_filter())
 else:
     set_active_stat("Assists")
-    set_active_season("2022/23")
+    set_active_season("20220/23")
     set_search_list()
 
-extract_list(False)
+extract_list()
 
 shut_down()

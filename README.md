@@ -62,3 +62,15 @@ Added new features or adjustments: -
   - python3 premiere_league_stats.py -s Appearances -y 2022/23 -p
   - python3 premiere_league_stats.py -s Assists -y 2003/04 -n
   - python3 premiere_league_stats.py -s Goals -y 2001/02 -p
+
+
+# New features 30 July 2023
+
+Added new features or adjustments: -
+- error handling
+- added error handling to set_active_season
+  - if an invlaid season is requested, an error is printed
+  - then set_active_season() defaults to current_season value
+- added get_filter_button() 
+  - find the filter button by filter name instead of current list value 
+
