@@ -68,9 +68,16 @@ Added new features or adjustments: -
 
 Added new features or adjustments: -
 - error handling
+- added get_filter_button() 
+  - find the filter button by filter name instead of current list value 
 - added error handling to set_active_season
   - if an invlaid season is requested, an error is printed
   - then set_active_season() defaults to current_season value
-- added get_filter_button() 
-  - find the filter button by filter name instead of current list value 
+
+# New features 31 July 2023
+
+Added new features or adjustments: -
+- added error handling to set_active_stat
+  - if an invlaid stat is requested, an error is printed
+  - then set_active_stat() defaults to default_stat value
 

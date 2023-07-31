@@ -22,7 +22,7 @@ def init():
     # exit()
 
     current_season = "2022/23"
-    default_stat = "Appearances"
+    default_stat = "Goals"
 
     driver = webdriver.Chrome()
     
@@ -172,6 +172,21 @@ def get_element_by_text(element, text):
 
 
 # Find an element by a class name
+def get_element_by_link_text(element, text):
+
+    class result:
+        text = ''
+
+    try:
+        result = element.find_element(By.LINK_TEXT,text)
+    
+    except:
+        result.text = "'" + text + "' not found"
+
+    return result
+
+
+# Find an element by a class name
 def get_element_by_class(element, class_name = "playerCountry"):
 
     class result:
@@ -207,6 +222,7 @@ def get_filter_button(text = "   Filter by Season  "):
 def get_parent_element(element):
 
     return element.find_element(By.XPATH,"..")
+
 
 # Find the next sibling of the supplied element
 def get_next_element(element, tag="div"):
@@ -325,19 +341,29 @@ def show_more_results():
 def set_active_stat(target_stat="Appearances"):
     global default_stat, active_stat
 
-    drop_down_button = get_drop_list_button(default_stat)
+    # drop_down_button = get_drop_list_button(default_stat)
+
+    drop_down_button = get_filter_button("Filter by Stat Type")
 
     show_drop_list(drop_down_button)
 
-    drop_list_div = get_next_element(drop_down_button)
+    drop_list = get_next_element(drop_down_button)
 
-    item = drop_list_div.find_element(By.LINK_TEXT,target_stat)
+    item = get_element_by_link_text(drop_list,target_stat)
+    
+    if item.text.find("not found") > -1:
 
-    item.click()
+        print("ERROR: The target statistic (" + target_stat + ") was not found, defaulting to " + default_stat)
+        show_drop_list(drop_down_button) # close drop down list
+        set_active_stat(default_stat)
 
-    advertClose()
+    else:
+        item.click()
 
-    active_stat = target_stat
+        advertClose()
+
+        active_stat = target_stat
+
 
     time.sleep(2)
 
@@ -454,8 +480,8 @@ if has_arguments():
     set_active_season(get_argument("season"))
     set_search_list(get_search_filter())
 else:
-    set_active_stat("Assists")
-    set_active_season("20220/23")
+    set_active_stat("Assistsys")
+    set_active_season("2002/03")
     set_search_list()
 
 extract_list()
