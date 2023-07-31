@@ -63,7 +63,6 @@ Added new features or adjustments: -
   - python3 premiere_league_stats.py -s Assists -y 2003/04 -n
   - python3 premiere_league_stats.py -s Goals -y 2001/02 -p
 
-
 # New features 30 July 2023
 
 Added new features or adjustments: -
@@ -80,4 +79,7 @@ Added new features or adjustments: -
 - added error handling to set_active_stat
   - if an invlaid stat is requested, an error is printed
   - then set_active_stat() defaults to default_stat value
+- pretty show_arguments() for values given by user on command line
+  - presented neatly on one line
+  - colours highlight user values
 

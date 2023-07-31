@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pathvalidate import sanitize_filename
 import argparse
+from termcolor import colored
 
 
 
@@ -17,7 +18,7 @@ def init():
     define_arguments()
     if has_arguments():
         show_arguments()
-        print(get_argument())
+        # print(get_argument())
     
     # exit()
 
@@ -87,10 +88,17 @@ def has_arguments():
 def show_arguments():
     global parser
 
+    str =colored("Search request ", 'dark_grey')  #\n"
+
     args = parser.parse_args()
 
     for arg, value in vars(args).items():
-        print(arg.capitalize(), '=', value)
+        if type(value) != bool:
+            str += arg.capitalize() + ' is ' + colored(value, 'green') + ", "
+        elif value:
+            str += "grouped by " + colored(arg.capitalize(), 'green')
+
+    print(str)
 
 
 # Retrieve a command line argument
@@ -480,7 +488,7 @@ if has_arguments():
     set_active_season(get_argument("season"))
     set_search_list(get_search_filter())
 else:
-    set_active_stat("Assistsys")
+    set_active_stat("Assists")
     set_active_season("2002/03")
     set_search_list()
 
