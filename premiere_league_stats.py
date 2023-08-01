@@ -65,6 +65,7 @@ def advertClose():
         advertClose.click()
 
 
+
 # ------------ Command Line Arguments ------------
 
 # Define command line arguments
@@ -164,14 +165,14 @@ def close_file():
 
 # ------------ DOM Utilities ------------
 
-# Find an element by a class name
-def get_element_by_text(element, text):
+# Find an element by tag & text
+def get_element_by_text(element, text, tag="div"):
 
     class result:
         text = ''
 
     try:
-        result = element.find_element(By.XPATH,".//div[text()='" + text + "']")
+        result = element.find_element(By.XPATH,".//" + tag + "[text()='" + text + "']")
     
     except:
         result.text = "'" + text + "' not found"
@@ -179,7 +180,7 @@ def get_element_by_text(element, text):
     return result
 
 
-# Find an element by a class name
+# Find an element by a link text
 def get_element_by_link_text(element, text):
 
     class result:
