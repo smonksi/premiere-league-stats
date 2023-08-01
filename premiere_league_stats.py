@@ -343,6 +343,7 @@ def show_more_results():
         return False
 
 
+
 # ------------ MAIN Loop ------------
 
 # Set the active stat
@@ -461,6 +462,9 @@ def print_result_page(table):
 
     results = get_table_rows(table)
 
+    if results == []:
+        return False
+
     for record in results:
         record_index = record_index + 1
 
@@ -488,9 +492,9 @@ if has_arguments():
     set_active_season(get_argument("season"))
     set_search_list(get_search_filter())
 else:
-    set_active_stat("Assists")
+    set_active_stat("Goals")
     set_active_season("2002/03")
-    set_search_list()
+    set_search_list("All Positions")
 
 extract_list()
 
