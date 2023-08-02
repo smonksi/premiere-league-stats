@@ -240,9 +240,11 @@ def get_next_element(element, tag="div"):
 
 
 # Find one element in a ul in order to find all its li elements
-def get_drop_list_elements(text, element='li'):
-
-    li = driver.find_element(By.XPATH,".//" + element + "[text()='" + text + "']")
+def get_drop_list_elements(text, tag='li'):
+    global driver
+    
+    # li = driver.find_element(By.XPATH,".//" + tag + "[text()='" + text + "']")
+    li = get_element_by_text(driver,text, tag)
 
     ul = get_parent_element(li)
 
